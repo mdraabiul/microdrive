@@ -1,0 +1,155 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
+
+  .navbar {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    justify-content: space-between;
+    padding-inline: 1rem;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    border: 1px solid lightgrey;
+
+    .logo {
+      width: 45px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .email {
+      background: whitesmoke;
+      display: flex;
+      border-radius: 20px;
+      padding: 0.4rem;
+      cursor: pointer;
+
+      &:hover {
+        background-color: orange;
+      }
+    }
+  }
+
+  .feed__main {
+    width: 98%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .header {
+        align-items: center;
+        justify-content: center;
+      }
+      .fileUploadButton {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .label {
+          min-width: 100%;
+          background: red;
+        }
+      }
+      .viewType {
+        border: 1px solid black;
+        border-radius: 20px;
+        padding-inline: 1rem;
+      }
+    }
+
+    .middle {
+      display: flex;
+      align-items: center;
+      align-content: center;
+      justify-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+
+      .fileName {
+        display: flex;
+        width: 50%;
+      }
+
+      .about {
+        width: 50%;
+        justify-content: left;
+        margin-right: 6rem;
+        align-items: center;
+        display: flex;
+      }
+    }
+
+    .main {
+      height: 100%;
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .file {
+        border-bottom: 1px solid lightgrey;
+        width: 100%;
+        padding-block: 0.7rem;
+        padding-inline: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:hover {
+          background: whitesmoke;
+          transition: all 0.3s;
+        }
+
+        .file__name {
+          min-width: 46%;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          align-content: center;
+          justify-content: flex-start;
+          gap: 0.8rem;
+        }
+        .file__timestamp {
+          min-width: 27%;
+          font-size: small;
+          color: grey;
+        }
+        .file__more {
+          min-width: 27%;
+          text-align: right;
+        }
+      }
+    }
+  }
+  .fileUploadingSnackbar {
+    display: flex;
+    align-items: right;
+    justify-content: right;    
+    margin-right: 2rem;
+    
+    .snackbar {
+      border: 1px solid lightcyan;
+      border-radius: 10px;
+      padding: 0.5rem;
+      min-width: 25%;
+      background: whitesmoke;
+      
+    }
+  }
+}
