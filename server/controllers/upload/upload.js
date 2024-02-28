@@ -1,22 +1,25 @@
 import File from "../../Models/File.js";
 
 const upload = async (req, res) => {
-  const { cFile, name, type, size } = await req.body;
+  const { cFile, name, type, size, userId } = await req.body;
 
-  try {
-    const newFile = new File({
-      cFile,
-      name,
-      type,
-      size,
-    });
+  const newFile = new File({
+    cFile,
+    name,
+    type,
+    size,
+    userId,
+    createdAt: Date.now(),
+  });
 
-    newFile.save().then((data) => {
-      res.status(200).json(data);
+  newFile
+    .save()
+    .then((file) => {
+      return res.status(201).json(file);
+    })
+    .catch((error) => {
+      return res.status(403).json(error);
     });
-  } catch (error) {
-    res.status(404).json(error.message);
-  }
 };
 
 export default upload;

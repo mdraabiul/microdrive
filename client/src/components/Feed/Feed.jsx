@@ -1,57 +1,69 @@
 import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useSelector, useDispatch } from "react-redux";
-import { addUser } from "../../features/user/userSlice";
-import cloud from "../../assets/clouds.png";
-import { IconButton, Button } from "@mui/material";
-import GridViewIcon from "@mui/icons-material/GridView";
-import ReorderIcon from "@mui/icons-material/Reorder";
-import AddIcon from "@mui/icons-material/Add";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ImageIcon from "@mui/icons-material/Image";
 import "./Feed.scss";
 import axios from "axios";
+import { format } from "date-fns";
+import cloud from "../../assets/clouds.png";
+import prettyBytes from "pretty-bytes";
+import toast, { Toaster } from "react-hot-toast";
+
+import { IconButton } from "@mui/material";
+import GridViewIcon from "@mui/icons-material/GridView";
+import ReorderIcon from "@mui/icons-material/Reorder";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import baseUrl from "../utils/baseUrl";
-import convertToBase64 from "../utils/convertToBase64";
+import uploadFile from "../utils/uploadFile";
+import InputFileUpload from "../utils/InputFileUpload";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
-const Feed = () => {
-  const dispatch = useDispatch();
+import ImageIcon from "@mui/icons-material/Image";
+import VideoFileIcon from "@mui/icons-material/VideoFile";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import LanguageIcon from "@mui/icons-material/Language";
+import HtmlIcon from "@mui/icons-material/Html";
+
+const Feed = ({ user }) => {
   const [loading, setLoading] = useState(false);
-  const user = useSelector((state) => state.user.value);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      const user = jwtDecode(token);
-      dispatch(addUser(user));
-    }
-  }, []);
+  const [loadingFiles, setLoadingFiles] = useState(false);
+  const [error, setError] = useState("");
+  const [fileEmpty, setFileEmpty] = useState("");
+  const [files, setFiles] = useState([]);
 
   const handleFileUpload = async (e) => {
     setLoading(true);
-    e.preventDefault();
-
     try {
-      const file = e.target.file.files[0];
-      const cFile = await convertToBase64(e.target.file.files[0]);
-
-      axios
-        .post(`${baseUrl}/upload`, {
-          cFile,
-          name: file.name,
-          type: file.type,
-          size: file.size,
-        })
-        .then((res) => {
-          console.log(res);
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-        });
+      const res = await uploadFile(e, user);
+      if (res) {
+        setFiles((files) => [res.data, ...files]);
+        setLoading(false);
+      }
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadFiles();
+    }
+  }, [user]);
+
+  const loadFiles = async () => {
+    toast.dismiss();
+    const res = axios.get(`${baseUrl}/upload/${user.userId}`);
+    toast.promise(res, {
+      loading: <b> Loading </b>,
+      success: (files) => {
+        setLoadingFiles(false);
+        setFiles(files.data);
+      },
+      error: <b> File loading failed, Reload </b>,
+    });
+  };
+
+  const handleReloadFiles = () => {
+    setLoadingFiles(true);
+    loadFiles();
   };
 
   return (
@@ -62,22 +74,31 @@ const Feed = () => {
         </div>
 
         <div className='email'>
-          <h6> {user.email} </h6>
+          <h6> {user?.email} </h6>
         </div>
       </div>
 
       <div className='feed__main'>
-        <div className='top'>
+        <div>
+          <Toaster position='top-center' />
+        </div>
+        <div className='error'>
+          <div>{error ? error : ""}</div>
+        </div>
+
+        <div className='top mb-4'>
           <div className='header'>
-            <h2>Home</h2>
-            <form
-              className='fileUploadButton'
-              encType='multipart/form-data'
-              onSubmit={handleFileUpload}
+            <InputFileUpload handleFileUpload={handleFileUpload} />
+          </div>
+
+          <div>
+            <IconButton
+              aria-label='refresh'
+              color='default'
+              onClick={handleReloadFiles}
             >
-              <input type='file' name='file' id='file' />
-              <button type='submit'>Upload</button>
-            </form>
+              <RefreshIcon />
+            </IconButton>
           </div>
 
           <div className='viewType'>
@@ -91,40 +112,66 @@ const Feed = () => {
           </div>
         </div>
 
-        <div className='middle border-bottom'>
-          <div className='fileName'>
-            <h6>FileName</h6>
-          </div>
-          <div className='about'>
-            <h6>About</h6>
-          </div>
-        </div>
-
         <div className='main'>
-          <div className='file'>
-            <div className='file__name'>
-              <ImageIcon />
-              Daily income
+          {files.length > 0 &&
+            files.map((file, index) => (
+              <div
+                className={"file"}
+                key={index}
+                style={{ display: loadingFiles && "none" }}
+              >
+                <div className='file__name'>
+                  {file.type === "image/png" && <ImageIcon color='error' />}
+                  {file.type === "image/jpeg" && <ImageIcon color='error' />}
+                  {file.type === "image/webp" && <LanguageIcon color='error' />}
+                  {file.type === "video/mp4" && <VideoFileIcon color='error' />}
+                  {file.type === "application/pdf" && (
+                    <PictureAsPdfIcon color='error' />
+                  )}
+                  {file.type === "application/hta" && (
+                    <HtmlIcon color='error' />
+                  )}
+
+                  {file.name}
+                </div>
+
+                <div className='file__type'>{file?.type}</div>
+
+                <div className='file__size'>{prettyBytes(file?.size)}</div>
+
+                <div className='file__timestamp'>
+                  Upload at {format(new Date(file?.createdAt), "MMM yy")}
+                </div>
+
+                <div className='file__more'>
+                  <IconButton aria-label='more' size='small'>
+                    <MoreVertIcon fontSize='inherit' />
+                  </IconButton>
+                </div>
+              </div>
+            ))}
+
+          {fileEmpty && (
+            <div className='file'>
+              <h5> {fileEmpty} </h5>
             </div>
-            <div className='file__timestamp'>feb 24 2024</div>
-            <div className='file__more'>
-              <IconButton aria-label='more' size='small'>
-                <MoreVertIcon fontSize='inherit' />
-              </IconButton>
+          )}
+
+          {loadingFiles && (
+            <div className='file'>
+              <h6> loading...! </h6>
             </div>
-          </div>
+          )}
         </div>
 
-        <div className='fileUploadingSnackbar'>
+        <div className='fileUploadingSnackbar '>
           {loading ? (
             <div className='snackbar'>
               <h6>1 file is uploading...</h6>
               <h6> loading...</h6>
             </div>
           ) : (
-            <div className='snackbar'>
-              <h6>1 file is uploaded</h6>
-            </div>
+            ""
           )}
         </div>
       </div>
