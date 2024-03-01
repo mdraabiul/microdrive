@@ -9,7 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { IconButton } from "@mui/material";
 import GridViewIcon from "@mui/icons-material/GridView";
 import ReorderIcon from "@mui/icons-material/Reorder";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+
 import baseUrl from "../utils/baseUrl";
 import uploadFile from "../utils/uploadFile";
 import InputFileUpload from "../utils/InputFileUpload";
@@ -20,6 +20,7 @@ import VideoFileIcon from "@mui/icons-material/VideoFile";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import LanguageIcon from "@mui/icons-material/Language";
 import HtmlIcon from "@mui/icons-material/Html";
+import BasicSelect from "./BasicSelect";
 
 const Feed = ({ user }) => {
   const [loading, setLoading] = useState(false);
@@ -34,6 +35,7 @@ const Feed = ({ user }) => {
       const res = await uploadFile(e, user);
       if (res) {
         setFiles((files) => [res.data, ...files]);
+
         setLoading(false);
       }
     } catch (error) {
@@ -64,6 +66,23 @@ const Feed = ({ user }) => {
   const handleReloadFiles = () => {
     setLoadingFiles(true);
     loadFiles();
+  };
+
+  const handleDeleteFile = (fileId) => {
+    const deleteRes = axios.delete(`${baseUrl}/upload`, {
+      data: { userId: user.userId, fileId },
+    });
+    toast.promise(deleteRes, {
+      loading: <b> Loading </b>,
+      success: () => {
+        setFiles((files) => files.filter((file) => file._id !== fileId));
+      },
+      error: <b> file not deleted </b>,
+    });
+  };
+
+  const handleRenameFile = (fileId) => {
+    console.log(fileId);
   };
 
   return (
@@ -131,8 +150,16 @@ const Feed = ({ user }) => {
                   {file.type === "application/hta" && (
                     <HtmlIcon color='error' />
                   )}
-
-                  {file.name}
+                  <input
+                    type='text'
+                    value={file.name}
+                    style={{
+                      border: "none",
+                      outline: "none",
+                      background: "transparent",
+                      fontWeight: "bold",
+                    }}
+                  />
                 </div>
 
                 <div className='file__type'>{file?.type}</div>
@@ -143,10 +170,17 @@ const Feed = ({ user }) => {
                   Upload at {format(new Date(file?.createdAt), "MMM yy")}
                 </div>
 
-                <div className='file__more'>
-                  <IconButton aria-label='more' size='small'>
-                    <MoreVertIcon fontSize='inherit' />
-                  </IconButton>
+                <div
+                  className='file__more'
+                  style={{
+                    position: "relative",
+                  }}
+                >
+                  <BasicSelect
+                    fileId={file._id}
+                    handleDeleteFile={handleDeleteFile}
+                    handleRenameFile={handleRenameFile}
+                  />
                 </div>
               </div>
             ))}
