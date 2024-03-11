@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./SignUp.scss";
 import Cloud from "../utils/Cloud";
 import TextField from "@mui/material/TextField";
@@ -8,7 +8,7 @@ import baseUrl from "../utils/baseUrl";
 import { SyncLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 
-const SignUp = () => {
+const SignUp = ({ user }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -49,38 +49,42 @@ const SignUp = () => {
     }
   };
 
+  useEffect(() => {
+    if (user) navigate("/feed");
+  }, [user]);
+
   return (
-    <main className='signup'>
-      <div className='signupBox'>
+    <main className="signup">
+      <div className="signupBox">
         <div style={{ height: "50px" }}>
-          {loading ? <SyncLoader size={10} color='orange' /> : <Cloud />}
+          {loading ? <SyncLoader size={10} color="orange" /> : <Cloud />}
         </div>
-        <div className='title'>
+        <div className="title">
           <h4>Create a Micro Drive Account</h4>
         </div>
         <form onSubmit={handleSignUp}>
           <TextField
-            label='Email'
-            name='email'
-            variant='outlined'
+            label="Email"
+            name="email"
+            variant="outlined"
             color={emailErrorEvent ? "error" : "primary"}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
-            label='password'
-            name='password'
-            type='password'
-            variant='outlined'
+            label="password"
+            name="password"
+            type="password"
+            variant="outlined"
             color={passwordErrorEvent ? "error" : "primary"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div className='errorMessage'>
+          <div className="errorMessage">
             <p>{error ? error : ""}</p>
           </div>
-          <div className='submit'>
-            <Button variant='contained' type='submit'>
+          <div className="submit">
+            <Button variant="contained" type="submit">
               Next
             </Button>
           </div>

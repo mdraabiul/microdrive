@@ -3,7 +3,7 @@ import File from "../../Models/File.js";
 const upload = async (req, res) => {
   const { cFile, name, type, size, userId } = await req.body;
 
-  const newFile = new File({
+  const newFile = await new File({
     cFile,
     name,
     type,
@@ -14,11 +14,11 @@ const upload = async (req, res) => {
 
   newFile
     .save()
-    .then((file) => {
-      return res.status(201).json(file);
+    .then((response) => {
+      return res.status(201).json(response);
     })
     .catch((error) => {
-      return res.status(403).json(error);
+      return res.status(404).json(error);
     });
 };
 

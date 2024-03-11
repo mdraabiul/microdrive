@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MenuItem from "@mui/material/MenuItem";
 import { Button, IconButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useNavigate } from "react-router-dom";
 
 export default function BasicSelect({
   fileId,
@@ -10,15 +11,21 @@ export default function BasicSelect({
 }) {
   const [showOptions, setShowOptions] = useState(false);
 
+  const navigate = useNavigate();
+
+  const handlePreview = () => {
+    navigate("/preview", { state: fileId });
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <div>
         <IconButton
           onClick={() => setShowOptions((prev) => !prev)}
-          aria-label='more'
-          size='small'
+          aria-label="more"
+          size="small"
         >
-          <MoreVertIcon fontSize='inherit' />
+          <MoreVertIcon fontSize="inherit" />
         </IconButton>
       </div>
       {showOptions && (
@@ -37,9 +44,21 @@ export default function BasicSelect({
             style={{
               justifyContent: "center",
             }}
-            onClick={() => handleRenameFile(fileId)}
+            onClick={() => {
+              handleRenameFile(fileId);
+              setShowOptions((prev) => !prev);
+            }}
           >
             Rename
+          </MenuItem>
+
+          <MenuItem
+            style={{
+              justifyContent: "center",
+            }}
+            onClick={handlePreview}
+          >
+            Preview
           </MenuItem>
           <MenuItem
             style={{

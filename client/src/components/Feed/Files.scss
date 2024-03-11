@@ -1,0 +1,66 @@
+.file {
+  border-bottom: 1px solid lightgrey;
+  width: 100%;
+  padding-block: 0.7rem;
+  padding-inline: 1rem;
+  display: flex;
+
+  justify-content: center;
+  justify-items: center;
+  align-items: center;
+  align-content: center;
+
+  &:hover {
+    background: whitesmoke;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .file__name {
+    font-weight: bold;
+    display: flex;
+    min-width: 40%;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
+    gap: 0.8rem;
+
+    .fileName {
+      border: none;
+      outline: none;
+      padding: 0.5rem;
+      font-weight: bold;
+      background: transparent;
+      border-bottom: 1px solid transparent;
+      &:focus {
+        border-bottom: 1px solid green;
+      }
+      &:hover{
+        cursor: pointer;
+      }
+    }
+  }
+
+  .file__type {
+    min-width: 15%;
+    font-size: small;
+    font-weight: bold;
+    color: gray;
+  }
+  .file__size {
+    min-width: 15%;
+    font-size: small;
+    color: grey;
+  }
+
+  .file__timestamp {
+    min-width: 15%;
+    font-size: small;
+    color: grey;
+  }
+  .file__more {
+    min-width: 15%;
+
+    text-align: right;
+  }
+}

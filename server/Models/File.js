@@ -2,7 +2,11 @@ import mongoose from "mongoose";
 
 const fileSchema = mongoose.Schema({
   cFile: String,
-  name: String,
+  name: {
+    type: String,
+    unique: true,
+    require: true,
+  },
   type: String,
   size: Number,
   userId: String,

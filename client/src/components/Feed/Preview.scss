@@ -1,0 +1,42 @@
+.preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: black;
+  
+
+  .preview__main {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 85vh;
+
+    .preview__file {
+      max-height: 100%;
+      max-width: 100%;
+      display: flex;
+      justify-content: center;
+      justify-items: center;
+      align-items: center;
+      align-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    }
+  }
+
+  .preview__action {
+    padding: 1rem;
+    display: flex;
+    align-content: center;
+    text-align: center;
+    justify-content: space-between;
+  }
+}

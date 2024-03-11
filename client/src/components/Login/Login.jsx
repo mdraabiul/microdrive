@@ -7,13 +7,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    setError("");
     let url = `${baseUrl}/login`;
 
     axios
@@ -21,6 +22,7 @@ const Login = () => {
       .then((res) => {
         let token = res.data;
         token && localStorage.setItem("token", token);
+        navigate("/feed");
       })
       .catch((error) => {
         setError(error.response.data);
@@ -35,8 +37,8 @@ const Login = () => {
 
   return (
     <main>
-      <div className='login'>
-        <div>
+      <div className="login">
+        <div className="w-25 h-25">
           <Cloud />
         </div>
         <div>
@@ -44,30 +46,30 @@ const Login = () => {
         </div>
         <form onSubmit={handleSubmit}>
           <TextField
-            label='Email'
-            name='email'
-            variant='outlined'
-            type='email'
+            label="Email"
+            name="email"
+            variant="outlined"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
 
           <TextField
-            label='Password'
-            name='password'
-            variant='outlined'
-            type='password'
+            label="Password"
+            name="password"
+            variant="outlined"
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          <p className='errorMessage'>{error ? error : ""}</p>
+          <p className="errorMessage">{error ? error : ""}</p>
 
-          <div className='d-flex justify-content-end'>
+          <div className="d-flex justify-content-end">
             <Button
-              variant='outlined'
-              className='mt-1 text-capitalize'
-              type='submit'
+              variant="outlined"
+              className="mt-1 text-capitalize"
+              type="submit"
             >
               Lets Go
             </Button>

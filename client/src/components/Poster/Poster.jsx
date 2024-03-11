@@ -1,9 +1,10 @@
 import React from "react";
 import "./Poster.scss";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Poster = () => {
+  const navigate = useNavigate();
   return (
     <main className='poster'>
       <section className='first'>
@@ -15,7 +16,7 @@ const Poster = () => {
           device, tablet, or computer
         </div>
         <div className='buttons m-4'>
-          <Button variant='contained' fullWidth>
+          <Button variant='contained' fullWidth onClick={() => navigate('/login')}>
             Go to Drive
           </Button>
         </div>
