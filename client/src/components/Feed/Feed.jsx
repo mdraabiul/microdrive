@@ -8,16 +8,24 @@ import baseUrl from "../utils/baseUrl";
 import InputFileUpload from "../utils/InputFileUpload";
 import Files from "./Files";
 import convertToBase64 from "../utils/convertToBase64";
+import { Button } from "@mui/material";
 
 const Feed = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [loadingFiles, setLoadingFiles] = useState(false);
   const [error, setError] = useState("");
   const [files, setFiles] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   useEffect(() => {
     if (user) {
-      const loadFiles = axios.get(`${baseUrl}/upload/${user.userId}`);
+      const loadFiles = axios.get(`${baseUrl}/upload/${user.userId}`, {
+        params: {
+          page,
+          limit,
+        },
+      });
       toast.promise(loadFiles, {
         loading: () => setLoadingFiles(true),
         success: (res) => {
@@ -27,13 +35,13 @@ const Feed = ({ user }) => {
         error: (err) => setError(err.message),
       });
     }
-  }, [user]);
+  }, [user, page, limit]);
 
   useEffect(() => {
     if (error) {
       setInterval(() => {
         setError("");
-      }, 1000);
+      }, 2000);
     }
   }, [error]);
 
@@ -49,12 +57,15 @@ const Feed = ({ user }) => {
           userId: user.userId,
         });
         toast.promise(uploadFile, {
-          loading: <b> Loading </b>,
+          loading: () => setLoading(true),
           success: (res) => {
             setLoading(false);
             setFiles((files) => [res.data, ...files]);
           },
-          error: <b> file already exist </b>,
+          error: () => {
+            setLoading(false);
+            setError("File with the same name already exist");
+          },
         });
       })
 
@@ -87,6 +98,10 @@ const Feed = ({ user }) => {
     });
   };
 
+  const loadMoreFiles = () => {
+    setPage(page + 1);
+  };
+
   return (
     <div className="feed">
       <div className="navbar">
@@ -101,7 +116,7 @@ const Feed = ({ user }) => {
           <Toaster position="top-center" />
         </div>
         <div className="error">
-          <div>{error ? error : ""}</div>
+          <p>{error ? error : ""}</p>
         </div>
 
         <div className="top mb-4">
@@ -121,6 +136,28 @@ const Feed = ({ user }) => {
                 handleSumbitRename={handleSumbitRename}
               />
             ))}
+
+          {files.length > 0 ? (
+            <Button
+              variant="text"
+              size="small"
+              color="success"
+              className="mt-4 text-capitalize"
+              onClick={loadMoreFiles}
+            >
+              More
+            </Button>
+          ) : (
+            <Button
+              variant="text"
+              size="small"
+              color="success"
+              className="mt-4 text-capitalize"
+              disabled
+            >
+              no more
+            </Button>
+          )}
 
           {loadingFiles && (
             <div className="file">

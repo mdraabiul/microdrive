@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Preview.scss";
 import axios from "axios";
 import Box from "@mui/material/Box";
@@ -14,6 +14,7 @@ const Preview = () => {
   const { state: fileId } = useLocation();
   const [file, setFile] = useState("");
   const navigate = useNavigate();
+  const videoRef = useRef(null);
 
   useEffect(() => {
     axios
@@ -24,11 +25,39 @@ const Preview = () => {
       .catch((error) => console.log(error));
   }, []);
 
+  const handleVolume = () => {
+    if (videoRef.current) videoRef.current.volume = 0.2;
+  };
   return (
     <div className="preview">
       <div className="preview__main">
         <div className="preview__file">
-          {file ? <img src={file.cFile} alt="file" /> : <CircularProgress />}
+          {!file.type && <CircularProgress />}
+          {file.type === "image/jpeg" && <img src={file.cFile} alt="file" />}
+          {file.type === "image/png" && <img src={file.cFile} alt="file" />}
+          {file.type === "image/webp" && <img src={file.cFile} alt="file" />}
+
+          {file.type === "image/webp" && <img src={file.cFile} alt="file" />}
+
+          {file.type === "video/mp4" && (
+            <video
+              style={{ width: "100%", height: "100%" }}
+              src={file.cFile}
+              ref={videoRef}
+              onLoadedMetadata={handleVolume}
+              controls
+              loop
+            >
+              Your browser does not support the video tag
+            </video>
+          )}
+
+          {file.type === "application/pdf" && (
+            <iframe
+              style={{ width: "100vw", height: "90vh" }}
+              src={file.cFile}
+            ></iframe>
+          )}
         </div>
       </div>
 
