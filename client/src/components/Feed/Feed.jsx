@@ -9,6 +9,7 @@ import InputFileUpload from "../utils/InputFileUpload";
 import Files from "./Files";
 import convertToBase64 from "../utils/convertToBase64";
 import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Feed = ({ user }) => {
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ const Feed = ({ user }) => {
   const [files, setFiles] = useState("");
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -148,15 +150,26 @@ const Feed = ({ user }) => {
               More
             </Button>
           ) : (
-            <Button
-              variant="text"
-              size="small"
-              color="success"
-              className="mt-4 text-capitalize"
-              disabled
-            >
-              no more
-            </Button>
+            <>
+              <Button
+                variant="text"
+                size="small"
+                color="success"
+                className="mt-4 text-capitalize"
+                disabled
+              >
+                no more
+              </Button>
+              <Button
+                variant="text"
+                size="small"
+                color="success"
+                className="mt-4 text-capitalize"
+                onClick={() => navigate(-1)}
+              >
+                Back
+              </Button>
+            </>
           )}
 
           {loadingFiles && (
