@@ -9,6 +9,7 @@ import SignUp from "./components/SignUp/SignUp";
 import Login from "./components/Login/Login";
 import Feed from "./components/Feed/Feed";
 import Preview from "./components/Feed/Preview";
+import NotFound from "./components/utils/NotFound";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -32,6 +33,7 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/feed" element={<Feed user={user} />} />
           <Route exact path="/preview" element={<Preview />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </Router>
